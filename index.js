@@ -21,7 +21,7 @@ const main = () => {
         return Promise.all([
             dormir('B', 1000).then(() => dormir('E', 1000)),
             dormir('C', 2000),
-            dormir('D', 3000),
+            dormir('D', 8000),
         ]);
     }).then(() => dormir('F', 2000)).catch((err) => {
         console.log('erreur:', err);
