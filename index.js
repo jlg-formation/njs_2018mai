@@ -4,8 +4,9 @@ const fs = require('fs');
 
 console.log('start');
 
-const dormir = (temps) => {
+const dormir = (label, temps) => {
     return new Promise((succesAppel, erreurAppel) => {
+        console.log(`${label}: Je m'endors pour ${temps}ms`);
         if (temps > 4000) {
             erreurAppel(`tu as depasse 4000. (${temps})`);
         } else {
@@ -16,8 +17,14 @@ const dormir = (temps) => {
 
 
 const main = () => {
-    dormir(8000).then(() => {}).catch((err) => {
-        console.log('erreur', err);
+    dormir('A', 2000).then(() => {
+        return Promise.all([
+            dormir('B', 1000).then(() => dormir('E', 1000)),
+            dormir('C', 2000),
+            dormir('D', 3000),
+        ]);
+    }).then(() => dormir('F', 2000)).catch((err) => {
+        console.log('erreur:', err);
     });
 };
 
