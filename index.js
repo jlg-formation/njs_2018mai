@@ -16,16 +16,18 @@ const dormir = (label, temps) => {
 };
 
 
-const main = () => {
-    dormir('A', 2000).then(() => {
-        return Promise.all([
-            dormir('B', 1000).then(() => dormir('E', 1000)),
-            dormir('C', 2000),
-            dormir('D', 8000),
-        ]);
-    }).then(() => dormir('F', 2000)).catch((err) => {
+const main = async () => {
+    try {
+        await dormir('A', 2000);
+        dormir('B', 1000).then(() => dormir('E', 1000));
+        dormir('C', 2000);
+        await dormir('D', 3000);
+        await dormir('F', 2000);
+        console.log(`c'est fini.`);
+    } catch (err) {
         console.log('erreur:', err);
-    });
+    }
+    
 };
 
 main();
