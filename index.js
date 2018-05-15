@@ -28,6 +28,5 @@ const main = () => {
     });
 };
 
-
 main();
 
