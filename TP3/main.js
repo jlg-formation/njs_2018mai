@@ -1,6 +1,8 @@
 'use strict';
 const Firebird = require('node-firebird');
 const path = require('path');
+const Promise = require('bluebird');
+Promise.promisifyAll(Firebird);
 
 const options = {
     host: '127.0.0.1',
@@ -12,14 +14,15 @@ const options = {
     role: null,
     pageSize: 4096,
 };
-Firebird.attach(options, function (err, db) {
-    if (err) {
-        console.log('error', err);
-        return;
-    }
-    db.query('SELECT count(*) FROM T_CLIENT', function (err, result) {
-        // IMPORTANT: close the connection
+
+(async function() {
+    try {
+        const db = await Firebird.attachAsync(options);
+        Promise.promisifyAll(db);
+        const result = await db.queryAsync('SELECT count(*) FROM T_CLIENT');
         console.log('result', result[0].COUNT);
-        db.detach();
-    });
-});
+        await db.detachAsync();
+    } catch (e) {
+        console.log('err', e);
+    }
+})();
