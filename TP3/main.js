@@ -27,7 +27,7 @@ const options = {
         Promise.promisifyAll(db);
 
         let acc = [];
-        const BULK_SIZE = 100;
+        const BULK_SIZE = 10000;
 
         await configure();
         await db.sequentiallyAsync(
