@@ -15,12 +15,17 @@ const options = {
     pageSize: 4096,
 };
 
-(async function() {
+(async function () {
     try {
         const db = await Firebird.attachAsync(options);
         Promise.promisifyAll(db);
-        const result = await db.queryAsync('SELECT count(*) FROM T_CLIENT');
-        console.log('result', result[0].COUNT);
+        db.sequentially(
+            'SELECT FIRST 10 * FROM T_CLIENT ',
+            (row, index) => {
+                console.log(row);
+            }, (err) => { });
+        const result = await db.queryAsync('');
+        console.log('result', result[0]);
         await db.detachAsync();
     } catch (e) {
         console.log('err', e);
