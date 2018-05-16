@@ -17,15 +17,15 @@ const options = {
 
 (async function () {
     try {
+        let counter = 0;
         const db = await Firebird.attachAsync(options);
         Promise.promisifyAll(db);
-        db.sequentially(
-            'SELECT FIRST 10 * FROM T_CLIENT ',
+        await db.sequentiallyAsync(
+            'SELECT * FROM T_CLIENT ',
             (row, index) => {
-                console.log(row);
-            }, (err) => { });
-        const result = await db.queryAsync('');
-        console.log('result', result[0]);
+                counter++;
+            });
+        console.log('counter = ', counter);
         await db.detachAsync();
     } catch (e) {
         console.log('err', e);
