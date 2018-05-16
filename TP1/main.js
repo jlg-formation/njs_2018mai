@@ -1,11 +1,12 @@
 const EventEmitter = require('events');
+const progressionBar = require('./progression-bar');
 
 class DownloadEmitter extends EventEmitter { };
 
 const downloadEmitter = new DownloadEmitter();
 
 downloadEmitter.on('progression', e => {
-    console.log('progression', e.percent);
+    progressionBar.draw(e.percent);
 });
 
 const progress = (percent) => {
@@ -28,4 +29,6 @@ const main = async () => {
 
 };
 
-main();
+(async () => {
+    await main();
+})();
