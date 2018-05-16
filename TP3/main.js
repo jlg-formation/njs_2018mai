@@ -3,6 +3,9 @@ const Firebird = require('node-firebird');
 const path = require('path');
 const Promise = require('bluebird');
 Promise.promisifyAll(Firebird);
+const fs = require('fs');
+
+const stream = fs.createWriteStream('client.csv');
 
 const options = {
     host: '127.0.0.1',
@@ -24,6 +27,7 @@ const options = {
             'SELECT * FROM T_CLIENT ',
             (row, index) => {
                 counter++;
+                stream.write(`${row.T_CLIENT_ID};${row.MATRICULE};${row.NOM}` + '\n');
             });
         console.log('counter = ', counter);
         await db.detachAsync();
