@@ -26,25 +26,34 @@ const options = {
         const db = await Firebird.attachAsync(options);
         Promise.promisifyAll(db);
 
+        let acc = [];
+        const BULK_SIZE = 100;
+
         await configure();
         await db.sequentiallyAsync(
-            'SELECT FIRST 10 * FROM T_CLIENT ',
+            'SELECT * FROM T_CLIENT ',
             async (row, index) => {
                 counter++;
                 stream.write(`${row.T_CLIENT_ID};${row.MATRICULE};${row.NOM}` + '\n');
-                try {
-                    await client.index({
-                        index: 'client',
-                        id: row.T_CLIENT_ID,
-                        type: 'MesClients',
-                        body: row,
-                        
-                    });
-                } catch (e) {
-                    console.log('error', e);
+
+                acc.push({ index: { _index: 'client', _type: 'MesClients', _id: row.T_CLIENT_ID } });
+                acc.push(row);
+                if (acc.length >= 2 + BULK_SIZE) {
+                    try {
+                        // console.log('counter', counter);
+                        const body = acc;
+                        acc = [];
+                        await client.bulk({ body });
+                    } catch (e) {
+                        console.log('error', e);
+                    }
                 }
 
+
             });
+        const body = acc;
+        acc = [];
+        await client.bulk({ body });
         console.log('counter = ', counter);
         await db.detachAsync();
     } catch (e) {

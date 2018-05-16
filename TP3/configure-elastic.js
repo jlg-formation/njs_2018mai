@@ -14,16 +14,16 @@ async function configure() {
         index: 'client'
     });
     if (alreadyExists) {
-        console.log('Elasticsearch index hello already exists.');
+        console.log('Elasticsearch index client already exists.');
         await client.indices.delete({
             index: 'client'
         });
-        console.log('Elasticsearch index hello deleted.');
+        console.log('Elasticsearch index client deleted.');
     }
     await client.indices.create({
         index: 'client'
     });
-    console.log('Elasticsearch index hello created.');
+    console.log('Elasticsearch index client created.');
 }
 
 module.exports = { configure, client };
