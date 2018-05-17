@@ -1,16 +1,28 @@
 'use strict';
-const Firebird = require('node-firebird');
-const path = require('path');
 const Promise = require('bluebird');
-Promise.promisifyAll(Firebird);
+let mock = '';
+let nodeFirebird = 'node-firebird';
+let Firebird;
+if (global.mode === 'dev') {
+    mock = '.mock';
+    Firebird = {
+        attachAsync: () => {
+            return {
+                sequentiallyAsync: () => {},
+                detachAsync: () => {},
+            };
+        }
+    }
+} else {
+    Firebird = require(nodeFirebird);
+    Promise.promisifyAll(Firebird);
+}
+const path = require('path');
+
+
 const fs = require('fs');
 
 const stream = fs.createWriteStream('client.csv');
-
-let mock = '';
-if (global.mode === 'dev') {
-    mock = '.mock';
-}
 
 const { configure, client } = require('./configure-elastic' + mock);
 
